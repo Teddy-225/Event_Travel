@@ -50,13 +50,11 @@ function initializeForm() {
             
             // Submit to Google Sheets (don't block on this)
             submitToGoogleSheets(formData).catch(error => {
-                console.error('Google Sheets error:', error);
                 showError('There was an issue saving your data. Please try again or contact us directly.');
             });
             
             // Send notifications (don't block on this)
             sendNotifications(formData).catch(error => {
-                console.error('Notification error:', error);
                 // Don't show error for notifications as they're not critical
             });
             
@@ -67,7 +65,6 @@ function initializeForm() {
             form.reset();
             
         } catch (error) {
-            console.error('Error submitting form:', error);
             showError('Something went wrong. Please check your details and try again.');
         } finally {
             // Reset button state
@@ -202,7 +199,6 @@ async function submitToGoogleSheets(data) {
         
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Google Sheets error response:', errorText);
             
             // Parse error message for better user feedback
             let errorMessage = 'Failed to save your data';
@@ -222,7 +218,6 @@ async function submitToGoogleSheets(data) {
         return result;
         
     } catch (error) {
-        console.error('Google Sheets submission error:', error);
         
         // Check for specific error types
         if (error.message.includes('not configured')) {
@@ -249,7 +244,6 @@ async function sendNotifications(data) {
         await sendGuestAcknowledgment(data);
         
     } catch (error) {
-        console.error('Notification error:', error);
         // Don't throw error as this shouldn't block form submission
     }
 }
@@ -306,7 +300,6 @@ Event: ${CONFIG.EVENT_NAME}
             });
         }
     } catch (error) {
-        console.error('Host notification error:', error);
     }
 }
 
@@ -369,13 +362,11 @@ Angel & Sharan
             });
         }
     } catch (error) {
-        console.error('Guest acknowledgment error:', error);
     }
 }
 
 // Show error message with popup
 function showError(message) {
-    console.error('Form error:', message);
     
     // Create error popup
     const errorPopup = document.createElement('div');
@@ -437,7 +428,6 @@ function showConfirmation() {
         // Scroll to confirmation
         confirmationMessage.scrollIntoView({ behavior: 'smooth' });
     } else {
-        console.error('Form or confirmation message element not found');
         showError('There was an issue displaying the confirmation. Please refresh the page and try again.');
     }
 }
