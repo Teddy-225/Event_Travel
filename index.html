@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roka Celebration - Travel Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <h1 class="main-title">Welcome to <span class="couple-names">Angel & Sharan's</span> Roka Celebration 💍</h1>
+            <div class="event-details">
+                <p class="event-date">📅 24th October 2025</p>
+                <p class="event-location">📍 Kapoor Vilas, Udaipur</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="couple-photo">
+                    <img src="image1.jpg" alt="Angel & Sharan" class="photo-image">
+                </div>
+                <h2 class="hero-title">We're thrilled to celebrate this special moment with you!</h2>
+                <p class="hero-subtitle">Please share your travel details, so we can ensure you have a wonderful time with us.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="form-section">
+        <div class="container">
+            <div class="form-container">
+                <h3 class="form-title">Travel Details Form</h3>
+                <form id="travelForm" class="travel-form">
+                    <!-- Personal Information -->
+                    <div class="form-group">
+                        <label for="guestName">Your Name *</label>
+                        <input type="text" id="guestName" name="guestName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numberOfGuests">Number of Guests *</label>
+                        <select id="numberOfGuests" name="numberOfGuests" required>
+                            <option value="">Select number of guests</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5+</option>
+                        </select>
+                    </div>
+
+                    <!-- Arrival Details -->
+                    <div class="form-section-title">Arrival Details</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="arrivalDate">Arrival Date *</label>
+                            <input type="date" id="arrivalDate" name="arrivalDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="arrivalTime">Arrival Time *</label>
+                            <input type="time" id="arrivalTime" name="arrivalTime" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="arrivalLocation">Arrival City/Station/Airport *</label>
+                        <input type="text" id="arrivalLocation" name="arrivalLocation" placeholder="e.g., Mumbai Airport, Delhi Railway Station" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transportMode">Mode of Transport *</label>
+                        <select id="transportMode" name="transportMode" required>
+                            <option value="">Select transport mode</option>
+                            <option value="flight">✈️ Flight</option>
+                            <option value="train">🚂 Train</option>
+                            <option value="bus">🚌 Bus</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Departure Details -->
+                    <div class="form-section-title">Departure Details (Optional)</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="departureDate">Departure Date</label>
+                            <input type="date" id="departureDate" name="departureDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="departureTime">Departure Time</label>
+                            <input type="time" id="departureTime" name="departureTime">
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="form-section-title">Contact Information</div>
+                    
+                    <div class="form-group">
+                        <label for="contactNumber">Contact Number *</label>
+                        <input type="tel" id="contactNumber" name="contactNumber" placeholder="+91 98765 43210" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guestEmail">Email Address *</label>
+                        <input type="email" id="guestEmail" name="guestEmail" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Special Notes</label>
+                        <textarea id="notes" name="notes" placeholder="Any special assistance needed, luggage details, dietary requirements, etc." rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <span>Send My Travel Plan</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+
+                <!-- Confirmation Message -->
+                <div id="confirmationMessage" class="confirmation-message" style="display: none;">
+                    <div class="confirmation-content">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Thank you for sharing your travel details!</h3>
+                        <p>We're so excited to see you soon 💖</p>
+                        <p>You'll receive a confirmation on WhatsApp or email shortly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="event-info">
+                    <h4>Event Details</h4>
+                    <p><strong>Date:</strong> 24th October 2025</p>
+                    <p><strong>Time:</strong> To be announced</p>
+                    <p><strong>Venue:</strong> Kapoor Vilas, Udaipur</p>
+                    <p><strong>Address:</strong> 35 B Block, Sector 14, Goverdhan Vilas - 313001</p>
+                    <a href="https://maps.app.goo.gl/HGpz661KmHwttfxs6" target="_blank" class="map-link">
+                        <i class="fas fa-map-marker-alt"></i> View on Map
+                    </a>
+                </div>
+                <div class="footer-bottom">
+                    <p>Made with love for our Roka 💫</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
