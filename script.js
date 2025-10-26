@@ -62,9 +62,9 @@ function initializeForm() {
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
+            }
+            
+            const result = await response.json();
             
             if (result.success) {
                 confirmationMessage.style.display = 'block';
@@ -73,11 +73,11 @@ function initializeForm() {
                     block: 'center'
                 });
                 form.reset();
-        } else {
+            } else {
                 throw new Error(result.error || 'Failed to submit travel details');
             }
-        
-    } catch (error) {
+            
+        } catch (error) {
             showError(error.message);
         } finally {
             submitBtn.innerHTML = originalText;
@@ -216,7 +216,7 @@ function initializeUpload() {
                 
                 if (result.success) {
                     addFileToGrid(file, result.url);
-    } else {
+                } else {
                     showError(`Failed to upload ${file.name}: ${result.error}`);
                 }
             } catch (error) {
@@ -426,7 +426,6 @@ function initializeSidebar() {
         handleDesktopHover();
     });
 
-    // Initialize margin on page load
     updateMainContentMargin();
 }
 
