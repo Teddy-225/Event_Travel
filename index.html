@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roka Celebration - Travel Details</title>
+    <title>Roka Celebration - Photo & Video Album</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -27,17 +27,101 @@
                 <div class="couple-photo">
                     <img src="image_v2.jpg" alt="Angel & Sharan" class="photo-image">
                 </div>
-                <h2 class="hero-title">We're thrilled to celebrate this special moment with you!</h2>
-                <p class="hero-subtitle">Please share your travel details, so we can ensure you have a wonderful time with us.</p>
+                <h2 class="hero-title" id="dynamicHeroTitle">We're thrilled to celebrate this special moment with you!</h2>
+                <p class="hero-subtitle" id="dynamicHeroSubtitle">Share your photos and videos from our celebration! Upload your memories to our shared album and relive the beautiful moments together.</p>
             </div>
         </div>
     </section>
 
-    <!-- Form Section -->
-    <section class="form-section">
-        <div class="container">
-            <div class="form-container">
-                <h3 class="form-title">Travel Details Form</h3>
+    <!-- Left Sidebar Navigation -->
+    <nav class="sidebar-nav" id="sidebarNav">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-heart"></i>
+                <span class="logo-text">Roka</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#" class="nav-item active" data-page="photos">
+                <i class="fas fa-camera"></i>
+                <span class="nav-text">Share Photos</span>
+            </a>
+            <a href="#" class="nav-item" data-page="travel">
+                <i class="fas fa-plane"></i>
+                <span class="nav-text">Travel Details</span>
+            </a>
+            <a href="#" class="nav-item" data-page="album">
+                <i class="fas fa-images"></i>
+                <span class="nav-text">View Album</span>
+            </a>
+            <a href="#" class="nav-item" data-page="info">
+                <i class="fas fa-info-circle"></i>
+                <span class="nav-text">Event Info</span>
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="mainContent">
+        <!-- Photos Page -->
+        <div class="page-content active" id="photos-page">
+                <div class="upload-container">
+                    <h3 class="upload-title">Share Your Memories 📸</h3>
+                    <p class="upload-subtitle">Upload photos and videos from our celebration to our shared album</p>
+                
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Drag & Drop your photos and videos here</h4>
+                        <p>or <span class="upload-link" id="uploadLink">click to browse</span></p>
+                        <input type="file" id="fileInput" multiple accept="image/*,video/*" style="display: none;">
+                        <div class="upload-info">
+                            <p><i class="fas fa-info-circle"></i> Supported formats: JPG, PNG, MP4, MOV (Max 100MB per file)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Progress -->
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">Uploading...</p>
+                </div>
+
+                <!-- Uploaded Files Preview -->
+                <div class="uploaded-files" id="uploadedFiles" style="display: none;">
+                    <h4>Uploaded Files</h4>
+                    <div class="files-grid" id="filesGrid"></div>
+                </div>
+
+                <!-- Album Link Section -->
+                <div class="album-section">
+                    <h4>View Our Shared Album</h4>
+                    <p>Click the button below to view all photos and videos from our celebration</p>
+                    <button class="album-btn" id="viewAlbumBtn">
+                        <i class="fas fa-images"></i>
+                        View Shared Album
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Travel Page -->
+        <div class="page-content" id="travel-page">
+            <div class="form-section">
+                <div class="container">
+                    <div class="form-container">
+                        <h3 class="form-title">Travel Details</h3>
+                        <p class="form-subtitle">Help us plan your visit by sharing your travel information</p>
                 <form id="travelForm" class="travel-form">
                     <!-- Personal Information -->
                     <div class="form-group">
@@ -134,9 +218,76 @@
                         <p>You'll receive a confirmation on WhatsApp or email shortly.</p>
                     </div>
                 </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+
+        <!-- Album Page -->
+        <div class="page-content" id="album-page">
+            <div class="album-viewer">
+                <div class="container">
+                    <h2 class="page-title">Our Shared Album 📸</h2>
+                    <p class="page-subtitle">View all photos and videos from our celebration</p>
+                    
+                    <div class="album-grid" id="albumGrid">
+                        <!-- Album content will be loaded here -->
+                        <div class="album-placeholder">
+                            <i class="fas fa-images"></i>
+                            <h3>Loading our beautiful memories...</h3>
+                            <p>Photos and videos will appear here once uploaded</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Info Page -->
+        <div class="page-content" id="info-page">
+            
+            <div class="event-info-page">
+                <div class="container">
+                    <h2 class="page-title">Event Information 💍</h2>
+                    <p class="page-subtitle">Everything you need to know about our Roka celebration</p>
+                    
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3>Event Details</h3>
+                            <p><strong>Date:</strong> 24th October 2025</p>
+                            <p><strong>Time:</strong> To be announced</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <h3>Venue Information</h3>
+                            <p><strong>Venue:</strong> Kapoor Vilas, Udaipur</p>
+                            <p><strong>Address:</strong> 35 B Block, Sector 14, Goverdhan Vilas - 313001</p>
+                            <a href="https://maps.app.goo.gl/HGpz661KmHwttfxs6" target="_blank" class="map-link">
+                                <i class="fas fa-map-marker-alt"></i> View on Map
+                            </a>
+                        </div>
+                        
+                        
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <h3>Contact Information</h3>
+                            <p><strong>Phone:</strong> +919587566699</p>
+                            <p><strong>Email:</strong> kapoorsharan98@gmail.com</p>
+                            <p><strong>For any questions or assistance, feel free to reach out!</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
