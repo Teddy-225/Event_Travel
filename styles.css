@@ -204,8 +204,74 @@ html {
     transform: scale(1.1);
 }
 
-/* Mobile toggle button */
+/* Mobile toggle button - responsive positioning */
 @media (max-width: 768px) {
+    /* Force toggle button to be visible regardless of parent state */
+    button#sidebarToggle,
+    .sidebar-toggle#sidebarToggle,
+    .sidebar-nav button#sidebarToggle,
+    .sidebar-nav.collapsed button#sidebarToggle,
+    .sidebar-nav:not(.collapsed) button#sidebarToggle {
+        display: block !important;
+        position: fixed !important;
+        top: 15px !important;
+        left: 5px !important;
+        z-index: 1002 !important;
+        background: #d4a574 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+        font-size: 1.1rem !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+        cursor: pointer !important;
+        width: 44px !important;
+        height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+        overflow: visible !important;
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+        will-change: opacity, visibility, transform !important;
+    }
+    
+    /* Adjust for smaller screens */
+    @media (max-width: 480px) {
+        button#sidebarToggle,
+        .sidebar-toggle#sidebarToggle,
+        .sidebar-nav button#sidebarToggle,
+        .sidebar-nav.collapsed button#sidebarToggle,
+        .sidebar-nav:not(.collapsed) button#sidebarToggle {
+            top: 10px !important;
+            left: 5px !important;
+            width: 40px !important;
+            height: 40px !important;
+            padding: 8px !important;
+            font-size: 1rem !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+        }
+    }
+    
+    /* Adjust for very small screens */
+    @media (max-width: 360px) {
+        button#sidebarToggle,
+        .sidebar-toggle#sidebarToggle,
+        .sidebar-nav button#sidebarToggle,
+        .sidebar-nav.collapsed button#sidebarToggle,
+        .sidebar-nav:not(.collapsed) button#sidebarToggle {
+            top: 8px !important;
+            left: 5px !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 6px !important;
+            font-size: 0.9rem !important;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease !important;
+        }
+    }
+    
     .sidebar-toggle {
         display: block !important;
         position: fixed !important;
@@ -225,6 +291,36 @@ html {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+    }
+    
+    /* Force visibility regardless of parent state */
+    .sidebar-nav .sidebar-toggle,
+    .sidebar-nav.collapsed .sidebar-toggle,
+    .sidebar-nav:not(.collapsed) .sidebar-toggle {
+        display: block !important;
+        position: fixed !important;
+        top: 20px !important;
+        left: 20px !important;
+        z-index: 1002 !important;
+        background: #d4a574 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px !important;
+        font-size: 1.2rem !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+        cursor: pointer !important;
+        width: 48px !important;
+        height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
     }
 }
 
@@ -1057,6 +1153,14 @@ html {
         transform: translateX(0) !important;
     }
     
+    .sidebar-nav.collapsed .sidebar-toggle {
+        position: fixed !important;
+        top: 20px !important;
+        left: 20px !important;
+        z-index: 1002 !important;
+        display: block !important;
+    }
+    
     .admin-dashboard {
         min-width: 300px;
         right: -50px;
@@ -1064,6 +1168,19 @@ html {
     
     .container {
         padding: 0 15px;
+    }
+    
+    /* Adjust main content padding for different screen sizes */
+    @media (max-width: 480px) {
+        .main-content {
+            padding-top: 45px;
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .main-content {
+            padding-top: 40px;
+        }
     }
 }
 
@@ -1108,6 +1225,7 @@ html {
     
     .main-content {
         margin-left: 0;
+        padding-top: 50px;
     }
     
     .main-content.sidebar-collapsed {
