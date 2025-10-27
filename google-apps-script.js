@@ -9,7 +9,7 @@ const CONFIG = {
   ADMIN_EMAIL: 'kapoorsharan98@gmail.com', // Replace with host email
   EVENT_NAME: 'Angel & Sharan\'s Roka Celebration',
   EVENT_DATE: '24th October 2025',
-  EVENT_VENUE: 'Kapoor Vilas, Udaipur',
+  EVENT_VENUE: 'Kapoor Vila, Udaipur',
   ALBUM_FOLDER_NAME: 'Angel & Sharan Roka Celebration Photos',
   MAX_FILE_SIZE: 100 * 1024 * 1024 // 100MB
 };
