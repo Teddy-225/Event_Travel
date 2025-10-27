@@ -62,9 +62,9 @@ function initializeForm() {
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
+        }
+        
+        const result = await response.json();
             
             if (result.success) {
                 confirmationMessage.style.display = 'block';
@@ -73,11 +73,11 @@ function initializeForm() {
                     block: 'center'
                 });
                 form.reset();
-            } else {
+        } else {
                 throw new Error(result.error || 'Failed to submit travel details');
             }
-            
-        } catch (error) {
+        
+    } catch (error) {
             showError(error.message);
         } finally {
             submitBtn.innerHTML = originalText;
@@ -216,7 +216,7 @@ function initializeUpload() {
                 
                 if (result.success) {
                     addFileToGrid(file, result.url);
-                } else {
+    } else {
                     showError(`Failed to upload ${file.name}: ${result.error}`);
                 }
             } catch (error) {
@@ -335,6 +335,29 @@ function initializeSidebar() {
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
         sidebar.classList.add('collapsed');
+        
+        // Move toggle button outside sidebar for mobile
+        if (sidebarToggle && sidebarToggle.parentNode === sidebar.querySelector('.sidebar-header')) {
+            document.body.appendChild(sidebarToggle);
+            sidebarToggle.style.display = 'block';
+            sidebarToggle.style.position = 'fixed';
+            sidebarToggle.style.top = '15px';
+            sidebarToggle.style.left = '5px';
+            sidebarToggle.style.zIndex = '1002';
+            sidebarToggle.style.backgroundColor = '#d4a574';
+            sidebarToggle.style.color = 'white';
+            sidebarToggle.style.border = 'none';
+            sidebarToggle.style.borderRadius = '8px';
+            sidebarToggle.style.padding = '10px';
+            sidebarToggle.style.fontSize = '1.1rem';
+            sidebarToggle.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+            sidebarToggle.style.cursor = 'pointer';
+            sidebarToggle.style.width = '44px';
+            sidebarToggle.style.height = '44px';
+            sidebarToggle.style.display = 'flex';
+            sidebarToggle.style.alignItems = 'center';
+            sidebarToggle.style.justifyContent = 'center';
+        }
     }
 
     function updateMainContentMargin() {
@@ -367,7 +390,7 @@ function initializeSidebar() {
 
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
-            e.preventDefault();
+        e.preventDefault();
             const targetPage = item.getAttribute('data-page');
             
             navItems.forEach(nav => nav.classList.remove('active'));
@@ -398,9 +421,9 @@ function initializeSidebar() {
             if (window.innerWidth <= 768) {
                 sidebar.classList.add('collapsed');
                 updateMainContentMargin();
-            }
-        });
+        }
     });
+});
 
     function handleDesktopHover() {
         if (window.innerWidth > 768) {
@@ -419,14 +442,125 @@ function initializeSidebar() {
     handleDesktopHover();
 
     window.addEventListener('resize', () => {
-        if (window.innerWidth <= 768) {
+        const isMobileNow = window.innerWidth <= 768;
+        if (isMobileNow) {
             sidebar.classList.add('collapsed');
+            // Move toggle button outside sidebar for mobile
+            if (sidebarToggle && sidebarToggle.parentNode === document.body) {
+                // Already moved, just ensure styling
+                sidebarToggle.style.display = 'block';
+                sidebarToggle.style.position = 'fixed';
+                sidebarToggle.style.top = '15px';
+                sidebarToggle.style.left = '5px';
+                sidebarToggle.style.zIndex = '1002';
+            } else if (sidebarToggle && sidebarToggle.parentNode === sidebar.querySelector('.sidebar-header')) {
+                // Move to body
+                document.body.appendChild(sidebarToggle);
+                sidebarToggle.style.display = 'block';
+                sidebarToggle.style.position = 'fixed';
+                sidebarToggle.style.top = '15px';
+                sidebarToggle.style.left = '5px';
+                sidebarToggle.style.zIndex = '1002';
+                sidebarToggle.style.backgroundColor = '#d4a574';
+                sidebarToggle.style.color = 'white';
+                sidebarToggle.style.border = 'none';
+                sidebarToggle.style.borderRadius = '8px';
+                sidebarToggle.style.padding = '10px';
+                sidebarToggle.style.fontSize = '1.1rem';
+                sidebarToggle.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+                sidebarToggle.style.cursor = 'pointer';
+                sidebarToggle.style.width = '44px';
+                sidebarToggle.style.height = '44px';
+                sidebarToggle.style.display = 'flex';
+                sidebarToggle.style.alignItems = 'center';
+                sidebarToggle.style.justifyContent = 'center';
+            }
+        } else {
+            // Move toggle button back to sidebar for desktop
+            if (sidebarToggle && sidebarToggle.parentNode === document.body) {
+                const sidebarHeader = sidebar.querySelector('.sidebar-header');
+                if (sidebarHeader) {
+                    sidebarHeader.appendChild(sidebarToggle);
+                    // Reset styles
+                    sidebarToggle.style.display = '';
+                    sidebarToggle.style.position = '';
+                    sidebarToggle.style.top = '';
+                    sidebarToggle.style.left = '';
+                    sidebarToggle.style.zIndex = '';
+                    sidebarToggle.style.backgroundColor = '';
+                    sidebarToggle.style.color = '';
+                    sidebarToggle.style.border = '';
+                    sidebarToggle.style.borderRadius = '';
+                    sidebarToggle.style.padding = '';
+                    sidebarToggle.style.fontSize = '';
+                    sidebarToggle.style.boxShadow = '';
+                    sidebarToggle.style.cursor = '';
+                    sidebarToggle.style.width = '';
+                    sidebarToggle.style.height = '';
+                    sidebarToggle.style.display = '';
+                    sidebarToggle.style.alignItems = '';
+                    sidebarToggle.style.justifyContent = '';
+                    // Reset scroll-based visibility
+                    sidebarToggle.style.opacity = '';
+                    sidebarToggle.style.visibility = '';
+                    sidebarToggle.style.transform = '';
+                }
+            }
         }
         updateMainContentMargin();
         handleDesktopHover();
     });
 
     updateMainContentMargin();
+    
+    // Scroll-based toggle button visibility
+    let lastScrollTop = 0;
+    let scrollTimeout;
+    let isScrolling = false;
+    
+    function handleScroll() {
+        if (window.innerWidth > 768) return;
+        
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const toggleButton = document.getElementById('sidebarToggle');
+        
+        if (!toggleButton) return;
+        
+        clearTimeout(scrollTimeout);
+        
+        if (currentScrollTop < lastScrollTop || currentScrollTop < 100) {
+            toggleButton.style.opacity = '1';
+            toggleButton.style.visibility = 'visible';
+            toggleButton.style.transform = 'translateY(0)';
+            isScrolling = false;
+        } else if (currentScrollTop > lastScrollTop && currentScrollTop > 100) {
+            toggleButton.style.opacity = '0';
+            toggleButton.style.visibility = 'hidden';
+            toggleButton.style.transform = 'translateY(-10px)';
+            isScrolling = true;
+        }
+        
+        lastScrollTop = currentScrollTop;
+        
+        scrollTimeout = setTimeout(() => {
+            if (window.innerWidth <= 768 && isScrolling) {
+                toggleButton.style.opacity = '1';
+                toggleButton.style.visibility = 'visible';
+                toggleButton.style.transform = 'translateY(0)';
+                isScrolling = false;
+            }
+        }, 1500);
+    }
+    
+    // Add scroll event listener with throttling
+    let scrollThrottle;
+    window.addEventListener('scroll', () => {
+        if (scrollThrottle) return;
+        scrollThrottle = setTimeout(() => {
+            handleScroll();
+            scrollThrottle = null;
+        }, 10);
+    }, { passive: true });
 }
 
 function loadAlbumContent() {
