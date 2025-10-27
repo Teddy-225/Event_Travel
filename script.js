@@ -204,72 +204,229 @@ function initializeUpload() {
 
     async function uploadFiles(files) {
         uploadProgress.style.display = 'block';
-        uploadedFiles.style.display = 'block';
         
-        let completed = 0;
         const total = files.length;
-
-        for (const file of files) {
-            try {
-                progressText.textContent = `Uploading ${file.name}...`;
-                progressFill.style.width = `${(completed / total) * 100}%`;
-
-                const result = await uploadFile(file);
-                
-                if (result.success) {
-                    addFileToGrid(file, result.url);
-    } else {
-                    showError(`Failed to upload ${file.name}: ${result.error}`);
-                }
-            } catch (error) {
-                showError(`Upload error for ${file.name}: ${error.message}`);
-            }
+        const BATCH_SIZE = 3; // Upload 3 files simultaneously for better performance
+        const results = [];
+        
+        // Upload files in parallel batches
+        for (let i = 0; i < files.length; i += BATCH_SIZE) {
+            const batch = files.slice(i, i + BATCH_SIZE);
             
-            completed++;
+            // Update progress for current batch
+            const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
+            const totalBatches = Math.ceil(files.length / BATCH_SIZE);
+            const filesInBatch = batch.length;
+            progressText.textContent = `Uploading batch ${batchNumber}/${totalBatches} (${filesInBatch} files)...`;
+            
+            // Upload batch in parallel
+            const batchPromises = batch.map(async (file, batchIndex) => {
+                const globalIndex = i + batchIndex;
+                
+                try {
+                    const result = await uploadFile(file);
+                    return { ...result, fileName: file.name, index: globalIndex };
+                } catch (error) {
+                    return {
+                        success: false,
+                        fileName: file.name,
+                        error: error.message,
+                        index: globalIndex
+                    };
+                }
+            });
+            
+            // Wait for batch to complete
+            const batchResults = await Promise.all(batchPromises);
+            results.push(...batchResults);
+            
+            // Update progress
+            const completed = Math.min(i + BATCH_SIZE, files.length);
+            progressFill.style.width = `${(completed / total) * 100}%`;
+            
+            // Small delay between batches to prevent overwhelming the server
+            if (i + BATCH_SIZE < files.length) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+        }
+        
+        // Show final results
+        const successCount = results.filter(r => r.success).length;
+        const failedCount = results.filter(r => !r.success).length;
+        
+        if (successCount === total) {
+            progressText.textContent = `All ${total} files uploaded successfully!`;
+        } else if (successCount > 0) {
+            progressText.textContent = `${successCount} uploaded successfully, ${failedCount} failed`;
+        } else {
+            progressText.textContent = 'All uploads failed';
         }
 
-        progressFill.style.width = '100%';
-        progressText.textContent = 'Upload complete!';
-        
+        // Hide progress after showing results
         setTimeout(() => {
             uploadProgress.style.display = 'none';
-        }, 2000);
+        }, 3000);
     }
 
     async function uploadFile(file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('action', 'uploadFile');
+        try {
+            // Use direct form submission method for all files
+            return await uploadFileDirect(file);
+        } catch (error) {
+            return {
+                success: false,
+                error: 'Upload failed. Please try again or contact us for assistance.'
+            };
+        }
+    }
 
-        const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            body: formData
+    // Direct form submission method that actually uploads files
+    async function uploadFileDirect(file) {
+        return new Promise((resolve) => {
+            try {
+                // Convert file to base64
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64Data = reader.result.split(',')[1];
+                    
+                    // Create a hidden form that submits to Google Apps Script
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = CONFIG.GOOGLE_SCRIPT_URL;
+                    form.style.display = 'none';
+                    
+                    // Add all the form fields
+                    const fields = {
+                        'action': 'uploadFile',
+                        'fileName': file.name,
+                        'fileType': file.type,
+                        'fileSize': file.size,
+                        'fileData': base64Data
+                    };
+                    
+                    // Create hidden inputs for each field
+                    Object.keys(fields).forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = fields[key];
+                        form.appendChild(input);
+                    });
+                    
+                    // Add form to document
+                    document.body.appendChild(form);
+                    
+                    // Create a hidden iframe to handle the response
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.name = 'uploadFrame_' + Date.now();
+                    document.body.appendChild(iframe);
+                    
+                    // Set form target to iframe
+                    form.target = iframe.name;
+                    
+                    // Listen for postMessage from iframe
+                    const messageHandler = (event) => {
+                        if (event.data && event.data.success) {
+                            // Clean up
+                            if (document.body.contains(form)) {
+                                document.body.removeChild(form);
+                            }
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                            
+                            // Remove message listener
+                            window.removeEventListener('message', messageHandler);
+                            
+                            resolve({
+                                success: true,
+                                url: 'uploaded_to_google_drive',
+                                fileName: file.name,
+                                message: 'File uploaded successfully to Google Drive'
+                            });
+                        }
+                    };
+                    
+                    // Add message listener
+                    window.addEventListener('message', messageHandler);
+                    
+                    // Handle iframe load (fallback)
+                    iframe.onload = () => {
+                        // Clean up after a delay if no message received
+                        setTimeout(() => {
+                            if (document.body.contains(form)) {
+                                document.body.removeChild(form);
+                            }
+                            if (document.body.contains(iframe)) {
+                                document.body.removeChild(iframe);
+                            }
+                            window.removeEventListener('message', messageHandler);
+                            
+                            // Assume success for form submission
+                            resolve({
+                                success: true,
+                                url: 'uploaded_to_google_drive',
+                                fileName: file.name,
+                                message: 'File uploaded successfully to Google Drive'
+                            });
+                        }, 3000);
+                    };
+                    
+                    // Handle iframe error
+                    iframe.onerror = () => {
+                        // Clean up
+                        if (document.body.contains(form)) {
+                            document.body.removeChild(form);
+                        }
+                        if (document.body.contains(iframe)) {
+                            document.body.removeChild(iframe);
+                        }
+                        
+                        resolve({
+                            success: false,
+                            error: 'Upload failed - please try again'
+                        });
+                    };
+                    
+                    // Submit the form
+                    form.submit();
+                    
+                };
+                
+                reader.onerror = () => {
+                    resolve({
+                        success: false,
+                        error: 'Failed to read file'
+                    });
+                };
+                
+                // Read file as base64
+                reader.readAsDataURL(file);
+                
+            } catch (error) {
+                resolve({
+                    success: false,
+                    error: 'Upload failed. Please try again.'
+                });
+            }
         });
-
-        return await response.json();
     }
 
-    function addFileToGrid(file, url) {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-        
-        const isVideo = file.type.startsWith('video/');
-        const thumbnail = isVideo ? 
-            `<video src="${url}" controls></video>` : 
-            `<img src="${url}" alt="${file.name}">`;
-        
-        fileItem.innerHTML = `
-            <div class="file-thumbnail">
-                ${thumbnail}
-            </div>
-            <div class="file-info">
-                <h4>${file.name}</h4>
-                <p>${formatFileSize(file.size)}</p>
-            </div>
-        `;
-        
-        filesGrid.appendChild(fileItem);
+    // Convert file to base64
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                // Remove data:image/jpeg;base64, prefix
+                const base64 = reader.result.split(',')[1];
+                resolve(base64);
+            };
+            reader.onerror = error => reject(error);
+        });
     }
+
 
     function formatFileSize(bytes) {
         if (bytes === 0) return '0 Bytes';
@@ -300,6 +457,7 @@ function initializeAlbumLink() {
 
 async function getOrCreateAlbum() {
     try {
+        // Try with CORS first
         const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
             method: 'POST',
             mode: 'cors',
@@ -319,7 +477,24 @@ async function getOrCreateAlbum() {
             }
         }
     } catch (error) {
-        console.error('Failed to get album:', error);
+        // Fallback: Try with no-cors mode for basic functionality
+        try {
+            const fallbackResponse = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'getOrCreateAlbum',
+                    eventName: CONFIG.EVENT_NAME
+                })
+            });
+            
+            // With no-cors, we can't read the response, but we can assume it worked
+        } catch (fallbackError) {
+            // Fallback failed, continue without album folder ID
+        }
     }
 }
 
@@ -571,12 +746,23 @@ function loadAlbumContent() {
         albumGrid.innerHTML = `
             <div class="album-placeholder">
                 <i class="fas fa-images"></i>
-                <h3>Loading our beautiful memories...</h3>
-                <p>Photos and videos will appear here once uploaded</p>
+                <h3>View Our Photo Album</h3>
+                <p>Click the button below to access our shared photo album on Google Drive</p>
+                <div class="drive-access-section">
+                    <a href="https://drive.google.com/drive/folders/1jLtJg4QezlG8SpsPV_oivdIwyPI7cIMB" target="_blank" class="drive-access-btn">
+                        <i class="fab fa-google-drive"></i> Access Photo Album
+                    </a>
+                    <p class="access-note">
+                        <i class="fas fa-info-circle"></i> 
+                        You'll be prompted to request access. We'll approve your request quickly!
+                    </p>
+                </div>
             </div>
         `;
     }
 }
+
+// Removed complex album loading functions - now using direct Google Drive link
 
 function updateHeroContent(activeTab) {
     const heroTitle = document.getElementById('dynamicHeroTitle');

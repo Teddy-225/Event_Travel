@@ -774,6 +774,231 @@ html {
     font-size: 1.1rem;
 }
 
+/* Album Items */
+.album-item {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid #f8d7da;
+}
+
+.album-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+    border-color: #d4a574;
+}
+
+.album-thumbnail {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.album-thumbnail img,
+.album-thumbnail video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.album-item:hover .album-thumbnail img,
+.album-item:hover .album-thumbnail video {
+    transform: scale(1.05);
+}
+
+.album-info {
+    padding: 1rem;
+    text-align: center;
+}
+
+.album-info h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #8b4513;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.album-info p {
+    color: #a0522d;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Error State Styling */
+.album-placeholder.error-state {
+    background: rgba(248, 215, 218, 0.3);
+    border: 2px solid #e74c3c;
+    padding: 2rem;
+}
+
+.album-placeholder.error-state i {
+    color: #e74c3c;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.album-placeholder.error-state h3 {
+    color: #e74c3c;
+    margin-bottom: 1.5rem;
+}
+
+.error-details {
+    text-align: left;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.error-details p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.error-solutions {
+    text-align: left;
+    margin: 1rem 0;
+    padding-left: 1rem;
+}
+
+.error-solutions li {
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+
+.retry-section {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.retry-btn {
+    background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+}
+
+.retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+    background: linear-gradient(135deg, #c9a876 0%, #d4a574 100%);
+}
+
+.retry-btn:active {
+    transform: translateY(0);
+}
+
+
+/* Google Drive Access Styles - Matching Project Theme */
+.drive-access-section {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.drive-access-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #d4a574 0%, #c9a876 100%);
+    color: white;
+    text-decoration: none;
+    padding: 16px 32px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+    margin: 1rem 0;
+    border: 2px solid transparent;
+}
+
+.drive-access-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+    background: linear-gradient(135deg, #c9a876 0%, #d4a574 100%);
+    color: white;
+    text-decoration: none;
+    border-color: #b8956a;
+}
+
+.drive-access-btn:active {
+    transform: translateY(-1px);
+}
+
+.drive-access-btn i {
+    font-size: 20px;
+    color: white;
+}
+
+.access-note {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: rgba(248, 215, 218, 0.3);
+    border-radius: 15px;
+    border-left: 4px solid #d4a574;
+    font-size: 1rem;
+    color: #a0522d;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #f8d7da;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.access-note i {
+    color: #d4a574;
+    margin-right: 8px;
+    font-size: 1.1rem;
+}
+
+/* Enhanced album placeholder for drive access */
+.album-placeholder .drive-access-section {
+    margin-top: 2rem;
+}
+
+.album-placeholder .drive-access-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: #8b4513;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.album-placeholder .drive-access-section p {
+    color: #a0522d;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.technical-note {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(231, 76, 60, 0.2);
+    font-style: italic;
+}
+
+.upload-encouragement {
+    color: #d4a574 !important;
+    font-weight: 600;
+    margin-top: 1rem !important;
+}
+
 /* Event Info Page */
 .event-info-page {
     padding: 2rem 0;
