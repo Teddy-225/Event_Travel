@@ -7,8 +7,7 @@ const CONFIG = {
     EVENT_DATE: '24th October 2025',
     EVENT_VENUE: 'Kapoor Villa, Udaipur',
     ALBUM_FOLDER_ID: '',
-    MAX_FILE_SIZE: 100 * 1024 * 1024,
-    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/jpg', 'video/mp4', 'video/quicktime']
+    ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/jpg', 'image/heic', 'image/heif', 'video/mp4', 'video/quicktime']
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -145,6 +144,7 @@ function initializeUpload() {
     const uploadedFiles = document.getElementById('uploadedFiles');
     const filesGrid = document.getElementById('filesGrid');
 
+
     uploadArea.addEventListener('dragover', handleDragOver);
     uploadArea.addEventListener('dragleave', handleDragLeave);
     uploadArea.addEventListener('drop', handleDrop);
@@ -178,16 +178,18 @@ function initializeUpload() {
         const errors = [];
 
         files.forEach(file => {
-            if (!CONFIG.ALLOWED_TYPES.includes(file.type)) {
+            // Check file type with more flexible validation for iOS files
+            const isValidType = CONFIG.ALLOWED_TYPES.includes(file.type) || 
+                               file.name.toLowerCase().endsWith('.heic') ||
+                               file.name.toLowerCase().endsWith('.heif') ||
+                               file.type === ''; // Some iOS files may not have proper MIME type
+            
+            if (!isValidType) {
                 errors.push(`${file.name}: Unsupported file type`);
                 return;
             }
 
-            if (file.size > CONFIG.MAX_FILE_SIZE) {
-                errors.push(`${file.name}: File too large (max 100MB)`);
-                return;
-            }
-
+            // No size constraints - accept all valid file types
             validFiles.push(file);
         });
 
