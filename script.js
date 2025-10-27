@@ -70,23 +70,8 @@ function initializeForm() {
                 data.departureDate = formatDate(data.departureDate);
             }
             
-            const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'addTravelDetails',
-                    data: data
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
+            // Use iframe form submission to bypass CORS
+            const result = await submitTravelDetailsViaIframe(data);
             
             if (result.success) {
                 confirmationMessage.style.display = 'block';
@@ -95,7 +80,7 @@ function initializeForm() {
                     block: 'center'
                 });
                 form.reset();
-        } else {
+            } else {
                 throw new Error(result.error || 'Failed to submit travel details');
             }
         
@@ -785,7 +770,114 @@ function loadAlbumContent() {
     }
 }
 
-// Removed complex album loading functions - now using direct Google Drive link
+// Submit travel details via iframe to bypass CORS
+async function submitTravelDetailsViaIframe(data) {
+    return new Promise((resolve) => {
+        try {
+            // Create a hidden iframe
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.name = 'travelFrame_' + Date.now();
+            document.body.appendChild(iframe);
+            
+            // Create form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = CONFIG.GOOGLE_SCRIPT_URL;
+            form.target = iframe.name;
+            form.style.display = 'none';
+            
+            // Add action field
+            const actionInput = document.createElement('input');
+            actionInput.type = 'hidden';
+            actionInput.name = 'action';
+            actionInput.value = 'addTravelDetails';
+            form.appendChild(actionInput);
+            
+            // Add all form data as hidden fields
+            Object.keys(data).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = data[key] || '';
+                form.appendChild(input);
+            });
+            
+            // Add to DOM
+            document.body.appendChild(form);
+            
+            // Listen for postMessage from iframe
+            const messageHandler = (event) => {
+                if (event.data && event.data.success) {
+                    // Clean up
+                    if (document.body.contains(form)) {
+                        document.body.removeChild(form);
+                    }
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                    
+                    // Remove message listener
+                    window.removeEventListener('message', messageHandler);
+                    
+                    resolve({
+                        success: true,
+                        message: 'Travel details submitted successfully'
+                    });
+                }
+            };
+            
+            // Add message listener
+            window.addEventListener('message', messageHandler);
+            
+            // Handle iframe load (fallback)
+            iframe.onload = () => {
+                // Clean up after a delay if no message received
+                setTimeout(() => {
+                    if (document.body.contains(form)) {
+                        document.body.removeChild(form);
+                    }
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                    window.removeEventListener('message', messageHandler);
+                    
+                    // Assume success for form submission
+                    resolve({
+                        success: true,
+                        message: 'Travel details submitted successfully'
+                    });
+                }, 5000);
+            };
+            
+            // Handle iframe error
+            iframe.onerror = () => {
+                // Clean up
+                if (document.body.contains(form)) {
+                    document.body.removeChild(form);
+                }
+                if (document.body.contains(iframe)) {
+                    document.body.removeChild(iframe);
+                }
+                window.removeEventListener('message', messageHandler);
+                
+                resolve({
+                    success: false,
+                    error: 'Failed to submit travel details'
+                });
+            };
+            
+            // Submit the form
+            form.submit();
+            
+        } catch (error) {
+            resolve({
+                success: false,
+                error: error.message
+            });
+        }
+    });
+}
 
 function updateHeroContent(activeTab) {
     const heroTitle = document.getElementById('dynamicHeroTitle');

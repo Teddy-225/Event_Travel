@@ -117,6 +117,29 @@ function doPost(e) {
         return ContentService
           .createTextOutput('<html><body><script>parent.postMessage({success: true, message: "File uploaded successfully"}, "*");</script></body></html>')
           .setMimeType(ContentService.MimeType.HTML);
+      } else if (action === 'addTravelDetails') {
+        // Handle travel details form submission
+        const travelData = {
+          guestName: formData.guestName || '',
+          numberOfGuests: formData.numberOfGuests || '',
+          arrivalDate: formData.arrivalDate || '',
+          arrivalTime: formData.arrivalTime || '',
+          arrivalLocation: formData.arrivalLocation || '',
+          transportMode: formData.transportMode || '',
+          departureDate: formData.departureDate || '',
+          departureTime: formData.departureTime || '',
+          contactNumber: formData.contactNumber || '',
+          guestEmail: formData.guestEmail || '',
+          notes: formData.notes || '',
+          eventName: CONFIG.EVENT_NAME
+        };
+        
+        response = addTravelDetails(travelData);
+        
+        // Return HTML response with postMessage
+        return ContentService
+          .createTextOutput('<html><body><script>parent.postMessage({success: true, message: "Travel details submitted successfully"}, "*");</script></body></html>')
+          .setMimeType(ContentService.MimeType.HTML);
       } else {
         throw new Error('Invalid action for FormData: ' + action);
       }
@@ -194,6 +217,44 @@ function addTravelDetails(data) {
     ];
     
     sheet.appendRow(row);
+    
+    // Send acknowledgment email to guest
+    if (data.guestEmail) {
+      try {
+        const acknowledgmentMessage = `
+Dear ${data.guestName},
+
+Thank you for sharing your travel details for ${CONFIG.EVENT_NAME}!
+
+We have received your information:
+- Arrival: ${data.arrivalDate} at ${data.arrivalTime || 'TBD'}
+- Departure: ${data.departureDate || 'TBD'} at ${data.departureTime || 'TBD'}
+- Guests: ${data.numberOfGuests}
+- Transport: ${data.transportMode || 'TBD'}
+
+We're excited to celebrate with you on October 24th, 2025 at Kapoor Villa, Udaipur!
+
+If you have any questions or need to update your travel details, please don't hesitate to contact us.
+
+Looking forward to seeing you soon!
+
+Warm regards,
+Angel & Sharan
+        `;
+        
+        GmailApp.sendEmail(
+          data.guestEmail,
+          `Thank you for your travel details - ${CONFIG.EVENT_NAME}`,
+          acknowledgmentMessage,
+          {
+            name: CONFIG.EVENT_NAME
+          }
+        );
+      } catch (emailError) {
+        // Log email error but don't fail the submission
+        console.error('Failed to send acknowledgment email:', emailError);
+      }
+    }
     
     return { success: true, message: 'Travel details added successfully' };
     
