@@ -5,7 +5,7 @@ const CONFIG = {
     ADMIN_PHONE: '+919587566699',
     EVENT_NAME: 'Angel & Sharan\'s Roka Celebration',
     EVENT_DATE: '24th October 2025',
-    EVENT_VENUE: 'Kapoor Vila, Udaipur',
+    EVENT_VENUE: 'Kapoor Villa, Udaipur',
     ALBUM_FOLDER_ID: '',
     MAX_FILE_SIZE: 100 * 1024 * 1024,
     ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/jpg', 'video/mp4', 'video/quicktime']
