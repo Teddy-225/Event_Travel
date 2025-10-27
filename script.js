@@ -21,8 +21,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setMinDate() {
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('arrivalDate').min = today;
-    document.getElementById('departureDate').min = today;
+    const eventDate = '2025-10-24'; // October 24th, 2025
+    const maxArrivalDate = '2025-10-24'; // Cannot arrive after event date
+    const maxDepartureDate = '2025-11-30'; // Allow departure until end of November
+    
+    // Set minimum date to today, but not before event date
+    const minDate = today < eventDate ? today : eventDate;
+    
+    // Arrival date: from today until event date (October 24th)
+    document.getElementById('arrivalDate').min = minDate;
+    document.getElementById('arrivalDate').max = maxArrivalDate;
+    
+    // Departure date: from arrival date until end of November
+    document.getElementById('departureDate').min = minDate;
+    document.getElementById('departureDate').max = maxDepartureDate;
+    
+    // Add event date validation
+    validateEventDates();
 }
 
 function initializeForm() {
@@ -42,6 +57,14 @@ function initializeForm() {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             
+            // Validate arrival date before submission
+            const arrivalDate = new Date(data.arrivalDate);
+            const eventDate = new Date('2025-10-24');
+            
+            if (arrivalDate > eventDate) {
+                throw new Error('❌ Cannot submit: Arrival date must be on or before October 24th, 2025 (the event date).');
+            }
+            
             data.arrivalDate = formatDate(data.arrivalDate);
             if (data.departureDate) {
                 data.departureDate = formatDate(data.departureDate);
@@ -54,7 +77,7 @@ function initializeForm() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    action: 'submitTravelDetails',
+                    action: 'addTravelDetails',
                     data: data
                 })
             });
@@ -831,5 +854,92 @@ function validateField(field) {
     } else {
         field.style.borderColor = '#ddd';
         return true;
+    }
+}
+
+function validateEventDates() {
+    const arrivalDate = document.getElementById('arrivalDate');
+    const departureDate = document.getElementById('departureDate');
+    
+    if (arrivalDate && departureDate) {
+        arrivalDate.addEventListener('change', function() {
+            const arrival = new Date(this.value);
+            const departure = new Date(departureDate.value);
+            const eventDate = new Date('2025-10-24');
+            
+            // Clear any existing errors first
+            clearFieldError(this);
+            
+            // Validate arrival date
+            if (arrival > eventDate) {
+                showFieldError(this, '❌ Cannot arrive after the event date. Please select October 24th, 2025 or earlier.');
+            } else if (departureDate.value && arrival > departure) {
+                showFieldError(this, '❌ Arrival date should be before departure date.');
+            } else if (arrival < eventDate) {
+                // This is allowed, but show a helpful note
+                showFieldInfo(this, '✅ Good! Arriving before the event date.');
+            } else if (arrival.getTime() === eventDate.getTime()) {
+                showFieldInfo(this, '✅ Perfect! Arriving on the event date.');
+            }
+            
+            // Update departure date minimum
+            if (this.value) {
+                departureDate.min = this.value;
+            }
+        });
+        
+        departureDate.addEventListener('change', function() {
+            const arrival = new Date(arrivalDate.value);
+            const departure = new Date(this.value);
+            const eventDate = new Date('2025-10-24');
+            
+            // Clear any existing errors first
+            clearFieldError(this);
+            
+            // Validate departure date
+            if (arrivalDate.value && departure < arrival) {
+                showFieldError(this, '❌ Departure date should be after arrival date.');
+            } else if (departure < eventDate) {
+                showFieldError(this, '❌ Departure date should be on or after the event date (October 24th, 2025).');
+            } else {
+                showFieldInfo(this, '✅ Departure date looks good!');
+            }
+        });
+    }
+}
+
+function showFieldError(field, message) {
+    field.style.borderColor = '#e74c3c';
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error';
+    errorDiv.style.color = '#e74c3c';
+    errorDiv.style.fontSize = '0.9rem';
+    errorDiv.style.marginTop = '0.25rem';
+    errorDiv.style.fontWeight = '500';
+    errorDiv.textContent = message;
+    field.parentNode.appendChild(errorDiv);
+}
+
+function showFieldInfo(field, message) {
+    field.style.borderColor = '#27ae60';
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'field-info';
+    infoDiv.style.color = '#27ae60';
+    infoDiv.style.fontSize = '0.9rem';
+    infoDiv.style.marginTop = '0.25rem';
+    infoDiv.style.fontWeight = '500';
+    infoDiv.textContent = message;
+    field.parentNode.appendChild(infoDiv);
+}
+
+function clearFieldError(field) {
+    field.style.borderColor = '#ddd';
+    const existingError = field.parentNode.querySelector('.field-error');
+    const existingInfo = field.parentNode.querySelector('.field-info');
+    if (existingError) {
+        existingError.remove();
+    }
+    if (existingInfo) {
+        existingInfo.remove();
     }
 }
